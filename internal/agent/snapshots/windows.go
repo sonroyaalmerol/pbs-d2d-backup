@@ -4,6 +4,7 @@
 package snapshots
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -73,10 +74,13 @@ func Snapshot(driveLetter string) (*WinVSSSnapshot, error) {
 		return nil, fmt.Errorf("Snapshot: error getting snapshot details -> %w", err)
 	}
 
+	ctx, cancel := context.WithCancel(context.Background())
 	newSnapshot := &WinVSSSnapshot{
 		SnapshotPath: snapshotPath,
 		LastAccessed: time.Now(),
 		Id:           sc.ID,
+		Ctx:          ctx,
+		CtxCancel:    cancel,
 	}
 	knownSnaps.Save(newSnapshot)
 
@@ -117,6 +121,8 @@ func (instance *WinVSSSnapshot) Close() {
 	}
 
 	knownSnaps.Delete(instance.SnapshotPath)
+
+	instance.CtxCancel()
 }
 
 func CloseAllSnapshots() {

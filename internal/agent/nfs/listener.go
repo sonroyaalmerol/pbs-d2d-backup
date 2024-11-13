@@ -7,7 +7,7 @@ import (
 
 type FilteredListener struct {
 	net.Listener
-	allowedIP string
+	AllowedIP string
 }
 
 func (fl *FilteredListener) Accept() (net.Conn, error) {
@@ -17,7 +17,7 @@ func (fl *FilteredListener) Accept() (net.Conn, error) {
 			return nil, err
 		}
 
-		if strings.Contains(conn.RemoteAddr().String(), fl.allowedIP) {
+		if strings.Contains(conn.RemoteAddr().String(), fl.AllowedIP) {
 			return conn, nil
 		}
 

@@ -4,6 +4,7 @@
 package snapshots
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"sync"
@@ -13,9 +14,12 @@ import (
 )
 
 type WinVSSSnapshot struct {
+	Ctx          context.Context
+	CtxCancel    context.CancelFunc
 	SnapshotPath string    `json:"path"`
 	Id           string    `json:"vss_id"`
 	LastAccessed time.Time `json:"last_accessed"`
+	NFSPort      int       `json:"nfs_port"`
 }
 
 type KnownSnapshots struct {
